@@ -44,10 +44,14 @@ const EditProduct = () => {
   return (
     <StyledEditProduct>
          <b>Edit Product</b>
+      <div className="upload-img">
+          <button>Upload Image</button>
+          <div className="">Mouse.jpg</div>
+      </div>
       <form>
            <Input type="input" placeholder="name" value={form.name.value} err={form.name.errMsg} setForm={setForm}/>
            <div className="form-control">
-                <textarea placeholder="description" name="desc" value={form.desc.value} onChange={onChange}>{form.desc.value}</textarea>
+                <textarea style={form.desc.errMsg ? {border:"1px solid red"} : {}} placeholder="description" name="desc" value={form.desc.value} onChange={onChange}>{form.desc.value}</textarea>
                 <p>{form.desc.errMsg}</p>
            </div>
            <Input type="input" placeholder="price" value={form.price.value} err={form.price.errMsg} setForm={setForm}/>

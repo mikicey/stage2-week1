@@ -5,7 +5,8 @@ import styled from "styled-components";
   display: flex;
   justify-content: center;
   align-items: center;
-  
+  padding-top:40px;
+  padding-bottom: 40px;
 
   .auth-desc{
        margin-right: 92px;
@@ -59,19 +60,24 @@ import styled from "styled-components";
         
 
         .form-control{
-            overflow-x: hidden;
+            
             position: relative;
             margin-bottom: 32px;
-            border: 1px solid #D2D2D240;
-            border-radius: 5px;
+           
             
-            input{
-               
+            input{ 
+                outline: none;
+                border: 2px solid white;
+                border-radius: 5px;
+
+
                 padding: 12px;
                 width: 100%;
                 background-color:#BCBCBC;
                 color: #555555;
                 font-size:18px;
+
+                transition: 150ms ease;
             }
 
             

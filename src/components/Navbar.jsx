@@ -1,14 +1,28 @@
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { StyledHeader } from '../core-ui/Header.style';
 import logo from "../assets/dumbmerch-logo.svg"
 
-// <p onClick={navigate("/complain")}>Complain</p>
-// <p onClick={navigate("/category")}>Category</p>
-// <p onClick={navigate("/product")}>Product </p> 
 
-const Navbar = ({isAdmin,setisLogin}) => {
 
-  let navigate = useNavigate();
+const Navbar = ({isAdmin,setUser}) => {
+
+
+  const navLinkStyles = ({isActive}) => {
+     if(isActive){
+        return {
+           color:"#F74D4D",
+           margin:"0 0 0 24px",
+           cursor:"pointer",
+
+        }
+     }
+
+     return {
+         color:"#FFFFFF",
+         margin:"0 0 0 24px",
+         cursor: "pointer"
+     }
+  }
  
 
   return (
@@ -17,11 +31,18 @@ const Navbar = ({isAdmin,setisLogin}) => {
             <img src={logo} style={{width:"70px"}}/>
             
             <div className='right'>
-                <p className='active'>Complain</p>
-                {isAdmin ? <p>Product</p> : <> <p>Profile</p> <p>Category</p> </>}
+                <NavLink style={navLinkStyles} to="/complain">Complain</NavLink>
+
+                {isAdmin ? 
+                <>
+                <NavLink style={navLinkStyles} to="/product">Product</NavLink> 
+                <NavLink style={navLinkStyles} to="/category">Category</NavLink>
+                </>
+                : 
+                <NavLink style={navLinkStyles} to="/myprofile">Profile</NavLink> }
                 
                 
-                <p onClick={()=>{setisLogin(false)}}>Logout</p>
+                <p onClick={()=>{setUser("")}}>Logout</p>
             </div>
             
         </nav>

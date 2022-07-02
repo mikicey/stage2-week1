@@ -4,22 +4,23 @@ export const StyledComplain = styled.section`
 
 display: flex;
 height: 100vh;
+padding-top:16px;
+padding-bottom: 16px;
 
 
 .chat-container{
     width:422px;
     height: 100%;
     overflow-y: scroll;
-    /* border: 1px solid; */
 }
 
 
 .middle-line{
     position: absolute;
     left:460px;
-    top:-68px;
+    top:-120px;
 
-    height: 110vh;
+    height: 106vh;
     width: 2px;
     background-color: #6A6A6A4D;
 

@@ -2,6 +2,8 @@ import styled from "styled-components";
 
  const StyledProfile = styled.section`
  display: flex;
+ padding-right: 84px;
+ padding-left: 84px;
 
  .left{
      .title{

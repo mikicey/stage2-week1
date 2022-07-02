@@ -16,8 +16,8 @@ const Input = ({type,placeholder,value,err,setForm}) => {
 
   return (
     <div className='form-control'>
-    <input type={type} placeholder={placeholder} name={placeholder} value={value} onChange={(e)=>{onChangeForm(e)}}/>
-    <p style={{color:"red",position:"absolute"}}>{err}</p>
+    <input type={type} style={err ? {border:"1px solid red"} : {}} placeholder={placeholder} name={placeholder} value={value} onChange={(e)=>{onChangeForm(e)}}/>
+    <p style={{color:"red",position:"absolute", top:"calc(100% + 2px)"}}>{err}</p>
     </div>
   )
 }

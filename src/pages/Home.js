@@ -54,7 +54,7 @@ const Home = () => {
   return (
     <>
       <StyledHome>
-             <b>Products</b>
+             <span className='title'>Products</span>
              <div className='products'>
                  {products.map(product => <ProductCard key={product.id} product={product} navigate={navigate}/>)}
              </div>

@@ -1,4 +1,4 @@
-const CategoryRow = ({category}) => {
+const CategoryRow = ({category,navigate,setIsModal,setId}) => {
     const id = category.id;
   
     return (
@@ -6,10 +6,8 @@ const CategoryRow = ({category}) => {
                           <td>{category.index + 1}</td>
                           <td>{category.name}</td>
                           <td className='btn-group'>
-                              <button className='edit-btn' onClick={()=>{
-                                console.log("clicked")
-                              }}>Edit</button> 
-                              <button className='delete-btn' >Delete</button>
+                          <button className='edit-btn' onClick={()=>{navigate(`/editproduct/${id}`)}}>Edit</button> 
+                            <button className='delete-btn' onClick={()=>{setIsModal(true);setId(id)}} >Delete</button>
                           </td>
       </tr>
     ) 

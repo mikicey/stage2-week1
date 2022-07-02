@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState,useEffect} from "react";
 import {BrowserRouter,Route,Routes,Navigate} from "react-router-dom";
 
 
@@ -21,19 +21,41 @@ import Detail from "./pages/Detail"
 
 
 function App() {
-  const[isLogin,setisLogin] = useState(true);
-  const[isAdmin,setisAdmin] = useState(true);
+  const[user,setUser] = useState("");
+
+  const[isLogin,setisLogin] = useState(false);
+  const[isAdmin,setisAdmin] = useState(false);
+  
+
+  useEffect(()=>{
+
+    if(user.isAdmin){
+      isAdmin(true)
+    } 
+
+    if(user){
+      setisLogin(true)
+    } else {
+      setisLogin(false);
+      setisAdmin(false);
+    }
+  
+   
+  },[user]);
+
+  
+  
   
   return (
     <div className="App">
     <BrowserRouter>
-       { isLogin && <Navbar  setisLogin={setisLogin} isAdmin={isAdmin}/> }
+       { isLogin && <Navbar  setUser={setUser} isAdmin={isAdmin}/> }
                                      
         <Routes>
             <Route path="/" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <Home/>  }/>
             <Route path="/detail/:id" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <Detail/>  }/>
 
-            <Route path="/auth" element={isLogin ? <Navigate to="/product"/>: <Auth setisLogin={setisLogin}/>}/>
+            <Route path="/auth" element={isLogin ? <Navigate to="/product"/>: <Auth setUser={setUser}/>}/>
 
             <Route path="/product" element={!isLogin?  <Navigate to="/auth"/> : !isAdmin? <Navigate to="/"/> : <Product/> }/>
             <Route path="/editproduct/:id" element={!isLogin?  <Navigate to="/auth"/> : !isAdmin? <Navigate to="/"/> : <EditProduct/> }/>
@@ -45,7 +67,7 @@ function App() {
             <Route path="/myprofile" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <Profile/>} />
 
 
-            <Route path="/complain" element={<Complain/>}/>
+            <Route path="/complain" element={!isLogin? <Navigate to="/auth"/> : <Complain/>}/>
         </Routes>
     </BrowserRouter>
     </div>

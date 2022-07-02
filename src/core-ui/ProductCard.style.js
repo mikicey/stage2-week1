@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const StyledProductCard = styled.div`
-width: 240px;
+width: 100%;
 border-radius: 6px;
 
 

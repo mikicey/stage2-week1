@@ -1,10 +1,13 @@
 import { useState } from "react";
+
+import { pushError,emailChecker } from "../auth";
+
 import logo from "../assets/dumbmerch-logo.svg";
 import Input from "../components/Input";
 import StyledAuth from "../core-ui/page/Auth.style.js"
 
 
- const Auth = ({setisLogin}) => {
+ const Auth = ({setUser}) => {
   const[auth,setAuth] = useState("register");
 
   const[loginForm,setLoginForm]=useState({
@@ -28,25 +31,84 @@ import StyledAuth from "../core-ui/page/Auth.style.js"
     },
   });
 
+
+
+
+  
+
   const submitLoginForm = (e) => {
     e.preventDefault();
 
-    //  check/validate
+    // sebenernya post req ke server
+    const users = JSON.parse(localStorage.getItem("users"));
 
-    // fetch req/store in localstorage
 
-    // 
-    setisLogin(true);
+    //  sebenernya validasi di server
+    if(users.findIndex(user => user.email === loginForm.email.value) === -1){
+      return pushError(setLoginForm,"email","Email isnt registered yet");
+    }
+
+    const user = users.filter(user => user.email === loginForm.email.value)[0];
+
+    if(user.password !== loginForm.password.value){
+      return pushError(setLoginForm,"password","Password invalid")
+    }
+
+
+    // sebenernya ketika menerima respons bahwa password & username benar
+    setUser(user);
   }
 
   const submitRegisterForm = (e) => {
     e.preventDefault();
-    //  check/validate
 
-    // fetch req/store in localstorage
+    //  Validate format
 
-    // 
-    setisLogin(true);
+    // username
+    if(registerForm.name.value === ""){
+      return pushError(setRegisterForm,"name","Name cannot be empty");
+
+    };
+
+    // email
+    if(!emailChecker(registerForm.email.value)){
+       return pushError(setRegisterForm,"email","Email format incorrect")
+    };
+
+        //  Validate Duplicate
+        const users = JSON.parse(localStorage.getItem("users"));
+        const duplicateUser = users.find(user => user.email === registerForm.email.value);
+    
+        if(duplicateUser){
+          return pushError(setRegisterForm,"email","Email already registered");
+        };
+
+
+
+    //  pw
+    if(registerForm.password.value.length < 8){
+      return pushError(setRegisterForm,"password","Minimal password length is 8")
+    };
+
+
+
+
+
+    // Push User
+    const newUser = {
+      id : users.length + 10,
+      email : registerForm.email.value,
+      password : registerForm.password.value,
+      username: registerForm.name.value,
+      isAdmin:false
+    }
+
+    users.push(newUser);
+
+    localStorage.setItem("users",JSON.stringify(users));
+
+    setUser(newUser);
+
   }
   
 

@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import {useNavigate} from "react-router-dom";
 import { StyledTable } from '../core-ui/Table.style'
 import ProductRow from '../components/ProductRow'
+import Modal from "../components/Modal";
+import {overlay} from "../constants/index"
 
 const Product = () => {
     const[products,setProducts] = useState([
@@ -53,7 +56,11 @@ const Product = () => {
             qty:900,
         }
     ])
-    const[isEditing,setIsEditing] = useState(false);
+    const[isModal,setIsModal] = useState(false);
+    const[idToDelete, setIdToDelete] = useState("");
+
+    const navigate = useNavigate();
+
 
     function deleteRow(id){
         setProducts(prev => {
@@ -61,16 +68,15 @@ const Product = () => {
              return newList;
         })
     };
-  
-    function editRow(id){
-          setIsEditing(!isEditing);
-    };
+
 
   return (
     <>
-        <section className='list-product-section'>
+        <section className='list-product-section' style={{padding:"80px 84px"}}>
+              {isModal? <Modal id={idToDelete} deleteRow={deleteRow} setIsModal={setIsModal}/> : ""}
+              {isModal? <div style={overlay}></div> : ""}
               
-              <b>List Product</b>
+              <b style={{fontSize:"24px"}}>List Product</b>
 
               <StyledTable>
               <thead>
@@ -88,7 +94,7 @@ const Product = () => {
               <tbody>
                    {
                     products.map((product,index) => {
-                        return <ProductRow key={product.id} product={{...product,index}} setEdit={editRow} deleteRow={deleteRow} />
+                        return <ProductRow key={product.id} product={{...product,index}} navigate={navigate} setIsModal={setIsModal} setId={setIdToDelete} />
                     })
                    }
              </tbody>

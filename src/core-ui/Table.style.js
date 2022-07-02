@@ -5,23 +5,24 @@ export const StyledTable = styled.table`
 
 width: 100%;
 margin-top: 48px;
-border-collapse: separate;
+border-collapse: collapse;
 
    thead tr{
         background-color:#303030;
+        border-bottom: 1px solid lightgray;
         
         th{
-        padding: 8px;
+        padding: 16px;
          }
    }
 
    .table-body-rows{
     background-color:#232323;
     text-align: center;
-    
+    border-bottom: 1px solid lightgray;
      
     td{
-        padding: 8px;
+        padding: 12px;
     }
 
    }

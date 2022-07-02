@@ -6,9 +6,19 @@ body {
     height: 100%;
 }
 
+@font-face {
+    font-family: Avenir;
+    src: url("./typeface/AvenirLTStd-Book.otf");
+  }
+
+@font-face {
+    font-family: AvenirBold;
+    src: url("./typeface/AvenirLTStd-Black.otf");
+}
+
 *{
     color: white;
-    font-family: sans-serif;
+    font-family: Avenir;
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
@@ -19,6 +29,8 @@ section{
     padding: 80px 40px;
     position: relative;
 }
+
+
 
 /* Button */
 button{
