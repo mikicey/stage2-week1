@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useNavigate,useParams } from "react-router-dom";
 
 import React from 'react'
@@ -6,7 +6,10 @@ import StyledEditProduct from '../core-ui/page/EditProduct.style'
 import Input from "../components/Input";
 
 const EditProduct = () => {
+  const navigate = useNavigate();
+  const {id} = useParams();
 
+ 
   const[form,setForm] = useState(
     {
       name : {
@@ -24,6 +27,27 @@ const EditProduct = () => {
     }
   )
 
+  useEffect(()=>{
+    const productsArray = JSON.parse(localStorage.getItem("products"));
+    const product = productsArray.filter(prod => prod.product_id == id)[0];
+   
+    setForm({
+      name : {
+        value : product.product_name, errMsg: ""
+      },
+      desc : {
+        value : product.product_desc, errMsg: ""
+      },
+      price : {
+        value : product.price , errMsg: ""
+      },
+      qty : {
+        value : product.product_qty , errMsg: ""
+      },
+    })
+  },[])
+
+
   const onChange = (e) => {
      setForm(prev => {
       return {
@@ -35,11 +59,26 @@ const EditProduct = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    const productsArray = JSON.parse(localStorage.getItem("products"));
+    const newProductsArray = productsArray.map(prod => {
+     
+     if(prod.product_id == id){
+       return {...prod,
+               product_name:form.name.value,
+               product_img:"",
+               price:form.price.value,
+               product_qty:form.qty.value,
+              product_desc:form.desc.value}
+     } else { return prod }
+
+    });
+
+    localStorage.setItem("products",JSON.stringify(newProductsArray));
+
     navigate("/product");
 }
 
-  const navigate = useNavigate();
-  const {id} = useParams();
+  
 
   return (
     <StyledEditProduct>

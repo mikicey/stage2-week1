@@ -28,6 +28,7 @@ span{
 }
 
 p{
+    word-break: break-all;
     margin: 12px;
 }
 

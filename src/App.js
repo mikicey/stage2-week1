@@ -1,4 +1,4 @@
-import { useState,useEffect} from "react";
+import { useState,useEffect,createContext} from "react";
 import {BrowserRouter,Route,Routes,Navigate} from "react-router-dom";
 
 
@@ -18,6 +18,11 @@ import Profile from "./pages/Profile";
 
 import Home from "./pages/Home"
 import Detail from "./pages/Detail"
+import NotFound from "./pages/NotFound"
+
+
+
+export const AppContext = createContext(null);
 
 
 function App() {
@@ -30,7 +35,7 @@ function App() {
   useEffect(()=>{
 
     if(user.isAdmin){
-      isAdmin(true)
+      setisAdmin(true)
     } 
 
     if(user){
@@ -44,10 +49,10 @@ function App() {
   },[user]);
 
   
-  
-  
   return (
     <div className="App">
+
+    <AppContext.Provider value={{user}}>
     <BrowserRouter>
        { isLogin && <Navbar  setUser={setUser} isAdmin={isAdmin}/> }
                                      
@@ -68,8 +73,12 @@ function App() {
 
 
             <Route path="/complain" element={!isLogin? <Navigate to="/auth"/> : <Complain/>}/>
+
+            <Route path="*" element={<NotFound/>} />
         </Routes>
     </BrowserRouter>
+    </AppContext.Provider>
+    
     </div>
   );
 }

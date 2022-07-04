@@ -29,7 +29,7 @@ div{
 
     p{
         color: #ABABAB;
-;
+        word-break: break-all;
     }
 }
 

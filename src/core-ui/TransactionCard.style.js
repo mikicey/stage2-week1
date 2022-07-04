@@ -29,17 +29,20 @@ object-fit: cover;
 
     b{
         color: #F74D4D;
+        word-break: break-all;
     }
 
     span{
         color:#F74D4D;
         margin: 4px 0 8px 0;
+        word-break: break-all;
     }
 
     .total{
         flex: 1;
         color: white;
         margin-top: 24px ;
+        word-break: break-all;
     }
 }
 `

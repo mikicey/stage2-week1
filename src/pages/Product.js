@@ -1,73 +1,50 @@
-import { useState } from 'react';
+import { useState,useEffect,useContext } from 'react';
 import {useNavigate} from "react-router-dom";
+
+import { AppContext } from '../App';
+
 import { StyledTable } from '../core-ui/Table.style'
 import ProductRow from '../components/ProductRow'
 import Modal from "../components/Modal";
 import {overlay} from "../constants/index"
 
 const Product = () => {
-    const[products,setProducts] = useState([
-        {
-            id:1000,
-            photo:"Mouse.jpg",
-            name:"Mouse",
-            desc:"Lorem ipsum mouse...",
-            price:500.000,
-            qty:60,
-        },
-        {
-            id:1001,
-            photo:"House.jpg",
-            name:"Mouse",
-            desc:"Lorem ipsum house...",
-            price:525.000,
-            qty:0,
-        },
-        {
-            id:1002,
-            photo:"Cat.jpg",
-            name:"Mouse",
-            desc:"Lorem ipsum cat...",
-            price:100.000,
-            qty:60,
-        },
-        {
-            id:1003,
-            photo:"Snake.jpg",
-            name:"Mouse",
-            desc:"Lorem ipsum snake...",
-            price:200.000,
-            qty:70,
-        },
-        {
-            id:1004,
-            photo:"Life.jpg",
-            name:"Mouse",
-            desc:"Lorem ipsum life...",
-            price:300.000,
-            qty:600,
-        },
-        {
-            id:1005,
-            photo:"Jump.jpg",
-            name:"Mouse",
-            desc:"Lorem ipsum jump...",
-            price:555.000,
-            qty:900,
-        }
-    ])
+    const{user} = useContext(AppContext);
+
+    const[products,setProducts] = useState([])
     const[isModal,setIsModal] = useState(false);
     const[idToDelete, setIdToDelete] = useState("");
 
     const navigate = useNavigate();
 
+    useEffect(()=>{
+        getProducts();
+    },[])
+
+    function getProducts(){
+        const productsArray = JSON.parse(localStorage.getItem("products"));
+        setProducts(productsArray);
+    
+      };
+
 
     function deleteRow(id){
-        setProducts(prev => {
-             const newList = prev.filter(item => item.id !== id);
-             return newList;
-        })
+        // setProducts(prev => {
+        //      const newList = prev.filter(item => item.id !== id);
+        //      return newList;
+        // })
+
+        const productsArray = JSON.parse(localStorage.getItem("products"));
+        const newProducts = productsArray.filter(prod => prod.product_id !== id);
+    
+        localStorage.setItem("products", JSON.stringify(newProducts));
+        getProducts();
     };
+
+
+   if(products.length === 0){
+    return (<div>Fetching Data</div>)
+   }
 
 
   return (
@@ -94,7 +71,7 @@ const Product = () => {
               <tbody>
                    {
                     products.map((product,index) => {
-                        return <ProductRow key={product.id} product={{...product,index}} navigate={navigate} setIsModal={setIsModal} setId={setIdToDelete} />
+                        return <ProductRow key={product.product_id} product={{...product,index}} navigate={navigate} setIsModal={setIsModal} setId={setIdToDelete} />
                     })
                    }
              </tbody>
