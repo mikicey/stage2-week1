@@ -1,5 +1,5 @@
 import { useState,useEffect,useContext } from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { AppContext } from "../App";
 
@@ -9,29 +9,31 @@ import Input from "../components/Input";
 
 import {api} from "../connection";
 
-const EditProduct = () => {
+const EditProfile = () => {
   const {token} = useContext(AppContext);
   const navigate = useNavigate();
-  const {id} = useParams();
-
+  
 //  State
-  const[originalImg,setOriginalImg] = useState(null);
+  
 
   const[form,setForm] = useState(
     {
       image : {
+        value : "" , errMsg: ""
+      },
+      phone : {
        value : "" , errMsg: ""
       },
-      name : {
+      gender : {
         value : "" , errMsg: ""
       },
-      desc : {
+      country : {
         value : "" , errMsg: ""
       },
-      price : {
+      city : {
         value : "" , errMsg: ""
       },
-      qty : {
+      address : {
         value : "" , errMsg: ""
       },
     }
@@ -43,19 +45,6 @@ const EditProduct = () => {
  },[])
  
 // Functions
-  const onChange = (e) => {
-     setForm(prev => {
-      return {
-        ...prev,
-        [ e.target.name ] : {
-          
-         value : e.target.value ,
-         errMsg : prev[e.target.name].errMsg
-
-        }
-      }
-     })
-  }
 
   const onSelect = (e) => {
     setForm(prev => {
@@ -70,33 +59,36 @@ const EditProduct = () => {
 
   const getInputs = async () => {
     try {
-      const res = await api.get(`/product/${id}`, {
+      const res = await api.get(`/profile}`, {
         headers: {'Authorization':`Bearer ${token}`}
         });
 
         // Extract data
       const payload = res.data;
-      const product = payload.data.product;
+      const profile = payload.data;
 
       setForm( {
         image : {
-         value :  "", errMsg: ""
+         value :  profile.image, errMsg: ""
         },
-        name : {
-          value : product.title , errMsg: ""
+        gender : {
+          value : profile.gender , errMsg: ""
         },
-        desc : {
-          value : product.desc , errMsg: ""
+        phone : {
+          value : profile.phone , errMsg: ""
         },
-        price : {
-          value : product.price , errMsg: ""
+        country : {
+          value : profile.country , errMsg: ""
         },
-        qty : {
-          value : product.qty , errMsg: ""
+        city : {
+          value : profile.city , errMsg: ""
         },
+        address : {
+            value : profile.address , errMsg: ""
+          },
       });
 
-      setOriginalImg(product.image)
+      
 
 
 
@@ -119,20 +111,20 @@ const EditProduct = () => {
     const formData = new FormData();
 
     formData.append("image",form.image.value);
-    formData.append("title",form.name.value);
-    formData.append("desc",form.desc.value);
-    formData.append("price",form.price.value);
-    formData.append("qty",form.qty.value);
-    formData.append("category_id",8);
+    formData.append("gender",form.gender.value);
+    formData.append("phone",form.phone.value);
+    formData.append("country",form.country.value);
+    formData.append("city",form.city.value);
+    formData.append("address",form.address.value);
 
 
     try {
-      await api.put(`/product/${id}`, formData , {
+      await api.put(`/profile`, formData , {
         headers: {'Authorization':`Bearer ${token}`}
         });
 
         
-        navigate("/product");
+        navigate("/myprofile");
 
 
       } catch (err) {
@@ -154,21 +146,17 @@ const EditProduct = () => {
       <div className="upload-img">
           <button>Upload Image</button>
           <input type="file" onChange={onSelect} name="image"/>
-          <span style={{marginLeft:"24px"}}> Original Image: </span>
-          <img src={originalImg} style={{width:"64px",marginLeft:"8px"}}/>
       </div>
       <form>
-           <Input type="input" placeholder="name" value={form.name.value} err={form.name.errMsg} setForm={setForm}/>
-           <div className="form-control">
-                <textarea style={form.desc.errMsg ? {border:"1px solid red"} : {}} placeholder="description" name="desc" value={form.desc.value} onChange={onChange}>{form.desc.value}</textarea>
-                <p>{form.desc.errMsg}</p>
-           </div>
-           <Input type="input" placeholder="price" value={form.price.value} err={form.price.errMsg} setForm={setForm}/>
-           <Input type="input" placeholder="qty" value={form.qty.value} err={form.qty.errMsg} setForm={setForm}/>
+           <Input type="input" placeholder="phone" value={form.phone.value} err={form.phone.errMsg} setForm={setForm}/>
+           <Input type="input" placeholder="gender" value={form.gender.value} err={form.gender.errMsg} setForm={setForm}/>
+           <Input type="input" placeholder="country" value={form.country.value} err={form.country.errMsg} setForm={setForm}/>
+           <Input type="input" placeholder="city" value={form.city.value} err={form.city.errMsg} setForm={setForm}/>
+           <Input type="input" placeholder="address" value={form.address.value} err={form.address.errMsg} setForm={setForm}/>
            <button onClick={onSubmit}>Save</button>
       </form>
     </StyledEditProduct>
   )
 }
 
-export default EditProduct
+export default EditProfile;

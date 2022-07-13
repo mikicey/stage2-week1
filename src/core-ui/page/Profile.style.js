@@ -2,6 +2,7 @@ import styled from "styled-components";
 
  const StyledProfile = styled.section`
  display: flex;
+ justify-content: center;
  padding-right: 84px;
  padding-left: 84px;
 
@@ -36,7 +37,7 @@ import styled from "styled-components";
  }
 
  .right{
-    margin-left:24px;
+    margin-left:100px;
 
     .title{
         font-size: 24px;

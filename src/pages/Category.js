@@ -1,48 +1,86 @@
 import { useState,useContext, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useQuery} from "react-query";
 
 import {AppContext} from "../App";
+import {api} from "../connection";
 
 import { StyledTable } from '../core-ui/Table.style';
 import CategoryRow from '../components/CategoryRow';
+
 import Modal from "../components/Modal";
 import {overlay} from "../constants/index"
 
  const Category = () => {
-  const {user} = useContext(AppContext);
+  const navigate = useNavigate();
+  const {token} = useContext(AppContext);
 
   const[categories,setCategories] = useState([]);
+  const[isLoading,setIsLoading] = useState(false);
+
   const[isModal,setIsModal] = useState(false);
   const[idToDelete, setIdToDelete] = useState("");
 
-  const navigate = useNavigate();
 
+  // Use Effect
   useEffect(()=>{
-      getCategories();
-  },[]);
+    getRows()
+  },[])
 
-  function getCategories(){
-    const categoriesArray = JSON.parse(localStorage.getItem("categories"));
-    setCategories(categoriesArray);
 
-  }
+  // Function
+  const getRows = async() => {
+    setIsLoading(true);
 
-  function deleteRow(id){
-    // setCategories(prev => {
-    //      const newList = prev.filter(item => item.id !== id);
-    //      return newList;
-    // })
+    try {
 
-    const categoriesArray = JSON.parse(localStorage.getItem("categories"));
-    const newCategories = categoriesArray.filter(cat => cat.category_id !== id);
+      const res = await api.get("/categories", {
+        headers: {'Authorization':`Bearer ${token}`}
+        });
 
-    localStorage.setItem("categories", JSON.stringify(newCategories));
-    getCategories();
-};
+      // Extract data
+      const payload = res.data;
+      const categories = payload.data.categories;
 
-if(categories.length === 0){
-  return (<div>Fetching Data</div>)
- }
+      setCategories(categories);
+      setIsLoading(false)
+
+    } catch (err) {
+      const payload = err.response.data;
+      const message = payload.message;
+
+      // navigate to error page
+      console.log(message)
+      setIsLoading(false)
+
+    };
+
+     };
+
+
+  const deleteRow = async(id) => {
+
+    try {
+      await api.delete(`/category/${id}`, {
+                     headers: {'Authorization':`Bearer ${token}`}
+                     }); 
+
+       getRows();
+
+
+    } catch(err) {
+      const payload = err.response.data;
+      const message = payload.message;
+
+      // navigate to error page
+      console.log(message)
+      setIsLoading(false)
+    };
+
+
+  };
+
+
 
 
 
@@ -52,7 +90,10 @@ if(categories.length === 0){
         {isModal? <Modal id={idToDelete} deleteRow={deleteRow} setIsModal={setIsModal}/> : ""}
         {isModal? <div style={overlay}></div> : ""}
         
-              <b style={{fontSize:"24px"}}>List Category</b>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                     <b style={{fontSize:"24px"}}>List Category</b>
+                     <button style={{backgroundColor:"#F74D4D",fontSize:"18px"}} onClick={()=>{navigate("/addcategory")}}>Add New</button>
+              </div>
 
               <StyledTable>
               <thead>
@@ -64,10 +105,12 @@ if(categories.length === 0){
                    </tr>
               </thead>
 
+              {isLoading && <div>Loading</div>}
+
               <tbody>
-                   {
+                   { categories &&
                     categories.map((category,index) => {
-                        return <CategoryRow key={category.category_id} category={{...category,index}} navigate={navigate} setIsModal={setIsModal} setId={setIdToDelete} />
+                        return <CategoryRow key={category.id} category={{...category,index}} navigate={navigate} setIsModal={setIsModal} setId={setIdToDelete} />
                     })
                    }
              </tbody>

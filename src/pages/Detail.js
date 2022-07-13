@@ -1,40 +1,71 @@
 import {useParams} from "react-router-dom";
-import { useEffect,useState } from "react";
+import { useEffect,useState,useContext } from "react";
 
+import {AppContext} from "../App"
 import StyledDetail from "../core-ui/page/Detail.style";
-import img from "../assets/cake.jpg";
+
+import {api} from "../connection"
 
 const Detail = () => {
-  // pakai ini untuk cari data di db
   let {id} = useParams();
+  const {token} = useContext(AppContext);
 
+  // States
   const[product,setProduct] = useState({
-    product_name: "",
-    product_qty:"",
-    product_desc:"",
+    image : "",
+    title: "",
+    qty:"",
+    desc:"",
     price:""
   })
 
+  // UseEffect
   useEffect(()=>{
-    const products = JSON.parse(localStorage.getItem("products"));
-    const singleProduct = products.find(prod => prod.product_id == id);
-    setProduct(singleProduct)
+      getProduct();
   },[])
+
+  // Function
+  const getProduct = async() => {
+
+    try {
+
+      const res = await api.get(`/product/${id}`, {
+        headers: {'Authorization':`Bearer ${token}`}
+        });
+
+      
+      // Extract data
+      const payload = res.data;
+      const product = payload.data.product;
+
+
+   
+
+      setProduct(product);
+      
+
+    } catch (err) {
+      const payload = err.response.data;
+      const message = payload.message;
+
+      // navigate to error page
+      console.log(message)
+      
+    };
+
+  };
+
+  
 
 
   return (
     <StyledDetail>
-          <img src={img} alt="cake"/>
+          <img src={product.image} alt="cake"/>
           <div className="right-section">
-                <span>{product.product_name}</span>
-                <p>Stock: {product.product_qty}</p>
-                <ul>
-                   <li>White Cake</li>
-                   <li>Size:L</li>
-                   <li>Tahan 1 hari saja</li>
-                </ul>
+                <span>{product.title}</span>
+                <p>Stock: {product.qty}</p>
                 <p>
-                   {product.product_desc}
+                   {product.desc}
                 </p>
 
                 <p className="price">Rp. {product.price}</p>

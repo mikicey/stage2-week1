@@ -1,45 +1,94 @@
-import { useState,useEffect } from "react";
+import { useState,useEffect,useContext } from "react";
 import { useNavigate,useParams } from "react-router-dom";
+
+import { AppContext } from "../App";
+
 import StyledEditCategory from "../core-ui/page/EditCategory.style";
 import Input from "../components/Input";
 
+import {api} from "../connection"
+
 const EditCategory = () => {
+  const {token} = useContext(AppContext);
+  const navigate = useNavigate();
+  const {id} = useParams();
+
+  // State
   const[form,setForm] = useState({
     category : {
       value : "" , errMsg: ""
     },
   });
 
-  const navigate = useNavigate();
-  const {id} = useParams();
-
+  // Use Effects
   useEffect(()=>{
-    const categoriesArray = JSON.parse(localStorage.getItem("categories"));
-    const category = categoriesArray.filter(cat => cat.category_id == id)[0];
    
-    setForm({
-      category : {
-        value : category.category_name,
-        errMsg : ""
-      }
-    })
-  },[])
+  getInputs();
 
-  const onSubmit = (e) => {
-       e.preventDefault();
-       const categoriesArray = JSON.parse(localStorage.getItem("categories"));
-       const newCategoriesArray = categoriesArray.map(cat => {
-        
-        if(cat.category_id == id){
-          return {...cat,category_name:form.category.value}
-        } else { return cat }
+  },[]);
 
-       });
 
-       localStorage.setItem("categories",JSON.stringify(newCategoriesArray));
 
-       navigate("/category");
-  }
+  // Functions
+  const getInputs = async () => {
+    try {
+      const res = await api.get(`/category/${id}`, {
+        headers: {'Authorization':`Bearer ${token}`}
+        });
+
+        // Extract data
+      const payload = res.data;
+      const name = payload.data.category.name;
+
+      setForm({
+        category : {
+          value : name,
+          errMsg : ""
+        }
+      });
+
+
+
+      } catch (err) {
+
+      
+      const payload = err.response.data;
+      const message = payload.message;
+
+      // navigate to error page
+      console.log(message)
+      
+
+      };
+  };
+  
+  const onSubmit = async(e) => {
+    e.preventDefault();
+   
+    try {
+      const res = await api.put(`/category/${id}`, {
+        "name" : form.category.value
+      }, {
+        headers: {'Authorization':`Bearer ${token}`}
+        });
+
+        navigate("/category");
+
+
+
+      } catch (err) {
+
+      const payload = err.response.data;
+      const message = payload.message;
+
+      // navigate to error page
+      console.log(message)
+      
+
+      };
+
+       
+  };
 
   return (
     <StyledEditCategory>

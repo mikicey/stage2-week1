@@ -1,56 +1,85 @@
-import { useState,useEffect } from 'react';
+import { useState,useEffect,useContext } from 'react';
 import {useNavigate} from "react-router-dom";
+
+import {AppContext} from "../App"
 import StyledHome from '../core-ui/page/Home.style';
 import ProductCard from '../components/ProductCard';
 
+
+import {api} from "../connection"
+
 const Home = () => {
-  const[products,setProducts] = useState([{
-    
-      "product_id": 1,
-      "product_name": "Cake",
-      "product_img": "",
-      "product_qty": 10, 
-      "price": 100000 , 
-      "category_id": 1,
-      "product_desc" : "This is product description"
-    
-  }]);
+  let navigate = useNavigate();
+
+  // States
+  const[products,setProducts] = useState([]);
+  const[isLoading,setIsLoading] = useState(false);
 
   const[search,setSearch] = useState("");
 
-  let navigate = useNavigate();
+  const{token} = useContext(AppContext);
 
- 
+  // Use Effect
+  useEffect(()=>{
+    getProducts()
+},[search]);
 
-   // tiap kali ganti search text
-   useEffect(()=>{
-       const writtenText = search;
-       const productsArray = JSON.parse(localStorage.getItem("products"));
+  
 
-       const newArray = productsArray.filter(prod => prod.product_name.toLowerCase().trim().startsWith(writtenText) === true);
-       setProducts(newArray);
-   },[search])
+  // Function
+  const getProducts = async() => {
 
-   
+    setIsLoading(true);
+
+      try {
+
+        const res = await api.get("/products", {
+          headers: {'Authorization':`Bearer ${token}`}
+          });
+
+        
+        // Extract data
+        const payload = res.data;
+        const products = payload.data.products;
+
+
+        // Sort Data
+        const newArray = products.filter(prod => prod.title.toLowerCase().trim().startsWith(search) === true);
+
+
+        setProducts(newArray);
+        setIsLoading(false)
+
+      } catch (err) {
+        const payload = err.response.data;
+        const message = payload.message;
+
+        // navigate to error page
+        console.log(message)
+        setIsLoading(false)
+
+      };
+  }
+
    const onSearch = (e) => {
       setSearch(e.target.value);
    }
   
    
 
-  
-  
-
   return (
     <>
+
       <StyledHome>
              <div className='title'>Products</div>
              <form onSubmit={(e)=>{e.preventDefault()}}>
                   <input type="text" placeholder='Search your products' onChange={onSearch} value={search}></input>
              </form>
-                 {products.length === 0 ? <div style={{}}>No results found..</div> : ""}
+                
+            {isLoading ? <div style={{marginBottom:"100vh"}}>Loading...</div> : products.length === 0 ? <div style={{marginBottom:"100vh"}}>No results found..</div> : ""}
+
              <div className='products'>
-                 {products.map(product => <ProductCard key={product.product_id} product={product} navigate={navigate}/>)}
+                 {products.map(product => <ProductCard key={product.id} product={product} navigate={navigate}/>)}
              </div>
       </StyledHome>
     </>

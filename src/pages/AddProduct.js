@@ -1,5 +1,5 @@
-import { useState,useEffect,useContext } from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import { useState,useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { AppContext } from "../App";
 
@@ -9,14 +9,11 @@ import Input from "../components/Input";
 
 import {api} from "../connection";
 
-const EditProduct = () => {
+const AddProduct = () => {
   const {token} = useContext(AppContext);
   const navigate = useNavigate();
-  const {id} = useParams();
-
+  
 //  State
-  const[originalImg,setOriginalImg] = useState(null);
-
   const[form,setForm] = useState(
     {
       image : {
@@ -37,11 +34,6 @@ const EditProduct = () => {
     }
   )
 
-// Use Effects
- useEffect(()=>{
-    getInputs();
- },[])
- 
 // Functions
   const onChange = (e) => {
      setForm(prev => {
@@ -68,50 +60,7 @@ const EditProduct = () => {
      })
   }
 
-  const getInputs = async () => {
-    try {
-      const res = await api.get(`/product/${id}`, {
-        headers: {'Authorization':`Bearer ${token}`}
-        });
 
-        // Extract data
-      const payload = res.data;
-      const product = payload.data.product;
-
-      setForm( {
-        image : {
-         value :  "", errMsg: ""
-        },
-        name : {
-          value : product.title , errMsg: ""
-        },
-        desc : {
-          value : product.desc , errMsg: ""
-        },
-        price : {
-          value : product.price , errMsg: ""
-        },
-        qty : {
-          value : product.qty , errMsg: ""
-        },
-      });
-
-      setOriginalImg(product.image)
-
-
-
-      } catch (err) {
-
-      
-      const payload = err.response.data;
-      const message = payload.message;
-
-      // navigate to error page
-      console.log(message)
-      
-
-      };
-  };
 
   const onSubmit = async(e) => {
     e.preventDefault();
@@ -127,7 +76,7 @@ const EditProduct = () => {
 
 
     try {
-      await api.put(`/product/${id}`, formData , {
+      await api.post(`/product`, formData , {
         headers: {'Authorization':`Bearer ${token}`}
         });
 
@@ -150,12 +99,10 @@ const EditProduct = () => {
 
   return (
     <StyledEditProduct>
-         <b>Edit Product</b>
+         <b>Add Product</b>
       <div className="upload-img">
           <button>Upload Image</button>
           <input type="file" onChange={onSelect} name="image"/>
-          <span style={{marginLeft:"24px"}}> Original Image: </span>
-          <img src={originalImg} style={{width:"64px",marginLeft:"8px"}}/>
       </div>
       <form>
            <Input type="input" placeholder="name" value={form.name.value} err={form.name.errMsg} setForm={setForm}/>
@@ -171,4 +118,4 @@ const EditProduct = () => {
   )
 }
 
-export default EditProduct
+export default AddProduct

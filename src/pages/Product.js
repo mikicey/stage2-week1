@@ -3,49 +3,85 @@ import {useNavigate} from "react-router-dom";
 
 import { AppContext } from '../App';
 
-import { StyledTable } from '../core-ui/Table.style'
-import ProductRow from '../components/ProductRow'
+import { StyledTable } from '../core-ui/Table.style';
+import ProductRow from '../components/ProductRow';
 import Modal from "../components/Modal";
-import {overlay} from "../constants/index"
+import {overlay} from "../constants/index";
+
+import {api} from "../connection";
 
 const Product = () => {
-    const{user} = useContext(AppContext);
+    const navigate = useNavigate();
+    const{token} = useContext(AppContext);
 
-    const[products,setProducts] = useState([])
+    const[products,setProducts] = useState([]);
+    const[isLoading,setIsLoading] = useState(false);
+
+
     const[isModal,setIsModal] = useState(false);
     const[idToDelete, setIdToDelete] = useState("");
 
-    const navigate = useNavigate();
+    // Use Effect
 
     useEffect(()=>{
-        getProducts();
+        getRows()
     },[])
 
-    function getProducts(){
-        const productsArray = JSON.parse(localStorage.getItem("products"));
-        setProducts(productsArray);
-    
+
+    // Function
+    const deleteRow = async(id) => {
+
+      try {
+        await api.delete(`/product/${id}`, {
+                       headers: {'Authorization':`Bearer ${token}`}
+                       }); 
+
+         getRows();
+
+
+      } catch(err) {
+        const payload = err.response.data;
+        const message = payload.message;
+
+        // navigate to error page
+        console.log(message)
+        setIsLoading(false)
       };
 
 
-    function deleteRow(id){
-        // setProducts(prev => {
-        //      const newList = prev.filter(item => item.id !== id);
-        //      return newList;
-        // })
-
-        const productsArray = JSON.parse(localStorage.getItem("products"));
-        const newProducts = productsArray.filter(prod => prod.product_id !== id);
-    
-        localStorage.setItem("products", JSON.stringify(newProducts));
-        getProducts();
     };
 
+    const getRows = async() => {
+        
+      setIsLoading(true);
 
-   if(products.length === 0){
-    return (<div>Fetching Data</div>)
-   }
+      try {
 
+        const res = await api.get("/products", {
+          headers: {'Authorization':`Bearer ${token}`}
+          });
+
+        // Extract data
+        const payload = res.data;
+        const products = payload.data.products;
+
+        setProducts(products);
+        setIsLoading(false)
+
+      } catch (err) {
+        const payload = err.response.data;
+        const message = payload.message;
+
+        // navigate to error page
+        console.log(message)
+        setIsLoading(false)
+
+      };
+
+    }
+
+
+   
 
   return (
     <>
@@ -53,7 +89,10 @@ const Product = () => {
               {isModal? <Modal id={idToDelete} deleteRow={deleteRow} setIsModal={setIsModal}/> : ""}
               {isModal? <div style={overlay}></div> : ""}
               
-              <b style={{fontSize:"24px"}}>List Product</b>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <b style={{fontSize:"24px"}}>List Product</b>
+                  <button style={{backgroundColor:"#F74D4D",fontSize:"18px"}} onClick={()=>{navigate("/addproduct")}}>Add New</button>
+              </div>
 
               <StyledTable>
               <thead>
@@ -68,13 +107,16 @@ const Product = () => {
                    </tr>
               </thead>
 
+               
               <tbody>
                    {
                     products.map((product,index) => {
-                        return <ProductRow key={product.product_id} product={{...product,index}} navigate={navigate} setIsModal={setIsModal} setId={setIdToDelete} />
+                        return <ProductRow key={product.id} product={{...product,index}} navigate={navigate} setIsModal={setIsModal} setId={setIdToDelete} />
                     })
                    }
              </tbody>
+
+             {isLoading && <div>Loading</div>}
                    
               </StyledTable>
               

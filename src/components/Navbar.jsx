@@ -42,7 +42,7 @@ const Navbar = ({isAdmin,setUser}) => {
                 <NavLink style={navLinkStyles} to="/myprofile">Profile</NavLink> }
                 
                 
-                <p onClick={()=>{setUser("")}}>Logout</p>
+                <p onClick={()=>{setUser("");localStorage.removeItem("token")}}>Logout</p>
             </div>
             
         </nav>

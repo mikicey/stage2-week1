@@ -7,7 +7,7 @@ const Input = ({type,placeholder,value,err,setForm}) => {
                 ...prev,
                 [e.target.name] : {
                     value :  e.target.value ,
-                    errMsg : ""
+                    errMsg : prev[e.target.name].errMsg
                 }
             }
           })

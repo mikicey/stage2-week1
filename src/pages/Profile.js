@@ -1,95 +1,108 @@
 import { useState,useContext, useEffect } from 'react';
 import { AppContext } from '../App';
+import { useNavigate } from 'react-router-dom';
 
 import StyledProfile from '../core-ui/page/Profile.style';
 import TransactionCard from "../components/TransactionCard";
-import img from "../assets/profile.jpg";
+import { api } from '../connection';
 
 const Profile = () => {
-  const{user} = useContext(AppContext);
+  const{user,token} = useContext(AppContext);
+  const navigate = useNavigate();
 
-  const[transactions,setTransactions] = useState([
-       {
-        id:1,
-        title:"Cake",
-        day:"Saturday",
-        date:"14 Juli 2021",
-        price:"500.000",
-        total: "500.000"
-       },
-       {
-        id:2,
-        title:"Cake",
-        day:"Saturday",
-        date:"14 Juli 2021",
-        price:"500.000",
-        total: "500.000"
-       },
-       {
-        id:3,
-        title:"Cake",
-        day:"Saturday",
-        date:"14 Juli 2021",
-        price:"500.000",
-        total: "500.000"
-       },
-       {
-        id:4,
-        title:"Cake",
-        day:"Saturday",
-        date:"14 Juli 2021",
-        price:"500.000",
-        total: "500.000"
-       }
-       ,  {
-        id:5,
-        title:"Cake",
-        day:"Saturday",
-        date:"14 Juli 2021",
-        price:"500.000",
-        total: "500.000"
-       }
-       
-  ]);
+//   State
+  const[transactions,setTransactions] = useState([]);
+  const[isLoading,setIsLoading] = useState(false);
 
   const[profile,setProfile] = useState({
-     user_id: user.id,
-     profile_img : "",
+     image : "",
      gender : "",
      phone : "",
-     address : ""
+     address : "",
+     city: "",
+     country : ""
   });
 
-  useEffect(()=>{
-     const profiles = JSON.parse(localStorage.getItem("profiles"));
+  
 
-     const myProfileArr = profiles.filter(profile => profile.user_id === user.id);
-     const myProfile = myProfileArr ? myProfileArr[0] : null;
+// useEffect
 
-     if(myProfile){
-          setProfile(prev => {
-               return {
-                    ...prev, 
-                    gender:myProfile.gender,
-                    phone:myProfile.phone,
-                    address:myProfile.address
-               }
-          })
-     }
-  },[])
+useEffect(()=>{
+   getProfile();
 
+   getTransactions();
+},[])
+
+
+// Function
+const getProfile = async() => {
+      try {
+          const res = await api.get("/profile", {
+               headers: {'Authorization':`Bearer ${token}`}
+               });
+
+          // Extract data
+          const payload = res.data;
+          const profile = payload.data;
+          setProfile(profile)
+
+      } catch(err) {
+          const payload = err.response.data;
+          const message = payload.message;
+
+        // navigate to error page
+        console.log(message)
+      };
+};
+
+const getTransactions = async() => {
+    setIsLoading(true)
+
+    try {
+     const res = await api.get("/transactions", {
+          headers: {'Authorization':`Bearer ${token}`}
+          });
+
+     // Extract data
+     const payload = res.data;
+     const transactionsData = payload.data.transactions;
+
+     setTransactions(transactionsData)
+     setIsLoading(false)
+
+
+
+
+ } catch(err) {
+     const payload = err.response.data;
+     const message = payload.message;
+     setIsLoading(false)
+   // navigate to error page
+   console.log(message)
+ };
+};
+
+
+ 
   return (
     <StyledProfile>
            <div className='left'>
-                <span className='title'>
-                    My Profile
-                </span>
+
+               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <span className='title'>
+                         My Profile
+                    </span>
+                    <button style={{backgroundColor:"#F74D4D",fontSize:"18px"}} onClick={()=>{navigate("/editprofile")}}>
+                         Edit Profile
+                    </button>
+                </div>
+                
 
                 <div className='profile-details'>
-                    <img className="profile-img" src={img}/>
+                    <img className="profile-img" src={profile.image}/>
                     <div className='profile-description'>
                          <b>Name</b>
-                         <p>{user.username}</p>
+                         <p>{user.name}</p>
 
                          <b>Email</b>
                          <p>{user.email}</p>
@@ -100,8 +113,8 @@ const Profile = () => {
                          <b>Gender</b>
                          <p>{profile.gender? profile.gender : "-"}</p>
                          
-                         <b>Address</b>
-                         <p>{profile.address? profile.address : "-"}
+                         <b> Complete Address</b>
+                         <p>{profile.address?  `${profile.address},${profile.city},${profile.country}` : "-"}
                          </p>
                          
                     </div>
@@ -116,8 +129,9 @@ const Profile = () => {
                 </span>
 
                 <div className='transaction-container'>
+                      {isLoading ? <div>This is loading..</div> : "" }
                       <div className='transaction-list'>
-                          { transactions.map(transaction => <TransactionCard key={transaction.id} transaction={transaction} />) }
+                          { transactions ? transactions.map(transaction => <TransactionCard key={transaction.id} transaction={transaction} />) : <p>Empty list</p>}
                       </div>
                 </div>
            </div>
