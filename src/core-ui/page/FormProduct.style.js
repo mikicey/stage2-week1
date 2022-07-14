@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
- const StyledEditProduct = styled.section`
+ const StyledFormProduct = styled.section`
 
   padding-right: 84px;
   padding-left: 84px;
@@ -12,12 +12,16 @@ import styled from "styled-components";
   .upload-img{
     margin-top:48px;
     display: flex;
+    width: 240px;
     align-items: center;
+    cursor: pointer;
 
-    button{
+    div{
       font-size: 18px;
       background-color: #F74D4D;
       margin-right:16px;
+      padding: 12px;
+      border-radius: 8px;
     }
   }
 
@@ -75,4 +79,4 @@ import styled from "styled-components";
   }
  `
 
-export default StyledEditProduct
+export default StyledFormProduct

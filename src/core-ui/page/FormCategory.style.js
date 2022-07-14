@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
- const StyledEditCategory = styled.section`
+ const StyledFormCategory = styled.section`
   padding-right: 84px;
   padding-left: 84px;
 
@@ -42,4 +42,4 @@ import styled from "styled-components";
   }
 `;
 
-export default StyledEditCategory;
+export default StyledFormCategory;

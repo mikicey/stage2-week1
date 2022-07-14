@@ -7,12 +7,26 @@ height: 100vh;
 padding-top:16px;
 padding-bottom: 16px;
 
+.search-btn{
+    background-color: rgba(247, 77, 77, 1);
+    margin : 4px 0px 16px 4px;
+    transition: 150ms linear;
+}
+
+.search-btn:hover{
+    transform:scale(1.05)
+}
 
 .chat-container{
     width:422px;
     height: 100%;
     overflow-y: scroll;
+    scrollbar-width: none;
 }
+
+.chat-container::-webkit-scrollbar {
+        display: none;
+    }
 
 
 .middle-line{
@@ -20,7 +34,7 @@ padding-bottom: 16px;
     left:460px;
     top:-120px;
 
-    height: 106vh;
+    height: 116vh;
     width: 2px;
     background-color: #6A6A6A4D;
 
@@ -35,7 +49,11 @@ padding-bottom: 16px;
     .messages-container{
         flex:1;
         overflow-y:scroll;
-        /* border: 1px solid wheat; */
+        scrollbar-width: none;
+    }
+
+    .messages-container::-webkit-scrollbar {
+        display: none;
     }
 
     form{

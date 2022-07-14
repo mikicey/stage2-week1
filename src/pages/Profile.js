@@ -6,6 +6,8 @@ import StyledProfile from '../core-ui/page/Profile.style';
 import TransactionCard from "../components/TransactionCard";
 import { api } from '../connection';
 
+import unknown from "../assets/unknown.jpg";
+
 const Profile = () => {
   const{user,token} = useContext(AppContext);
   const navigate = useNavigate();
@@ -99,7 +101,7 @@ const getTransactions = async() => {
                 
 
                 <div className='profile-details'>
-                    <img className="profile-img" src={profile.image}/>
+                    <img className="profile-img" src={profile.image? profile.image : unknown}/>
                     <div className='profile-description'>
                          <b>Name</b>
                          <p>{user.name}</p>

@@ -4,10 +4,12 @@ import { useNavigate,useParams } from "react-router-dom";
 import { AppContext } from "../App";
 
 
-import StyledEditProduct from '../core-ui/page/EditProduct.style'
+import StyledFormProduct from '../core-ui/page/FormProduct.style.js'
 import Input from "../components/Input";
 
 import {api} from "../connection";
+import { pushError } from "../auth";
+import Alert from "../components/Alert";
 
 const EditProduct = () => {
   const {token} = useContext(AppContext);
@@ -34,13 +36,29 @@ const EditProduct = () => {
       qty : {
         value : "" , errMsg: ""
       },
+      category : {
+        value : "" , errMsg : ""
+      }
     }
   )
+  const[errMsg,setErrMsg] = useState("");
+
+  
 
 // Use Effects
+
+useEffect(()=>{
+  if(form.image.value && typeof form.image.value !== "string"){
+  const image = URL.createObjectURL(form.image.value);
+  setOriginalImg(image)
+  
+}
+},[form])
+
  useEffect(()=>{
     getInputs();
  },[])
+
  
 // Functions
   const onChange = (e) => {
@@ -94,6 +112,10 @@ const EditProduct = () => {
         qty : {
           value : product.qty , errMsg: ""
         },
+        category : {
+          value : product.category , errMsg : ""
+        }
+
       });
 
       setOriginalImg(product.image)
@@ -116,6 +138,52 @@ const EditProduct = () => {
   const onSubmit = async(e) => {
     e.preventDefault();
 
+    
+
+    // Reset
+    setErrMsg("")
+
+    // Filter
+    if(!form.image.value){
+        return setErrMsg("Please select a new file(Not empty)")
+    };
+
+    if(form.name.value.length < 4){
+      return pushError(setForm, "name" , "Name can't be lower than 4 characters")
+    }else {
+      pushError(setForm, "name", "")
+    };
+
+    if(form.desc.value.length < 8){
+      return pushError(setForm, "desc" , "Desc can't be lower than 8 characters")
+    }else {
+      pushError(setForm, "desc", "")
+    };
+
+    if(form.category.value.length < 4){
+      return pushError(setForm, "category" , "Category can't be lower than 4 characters")
+    }else {
+      pushError(setForm, "category", "")
+    };
+
+    if(form.price.value < 1){
+      return pushError(setForm, "price" , "Price must be bigger than 1")
+    }else {
+      pushError(setForm, "price", "")
+    };
+
+    if(form.qty.value < 1){
+      return pushError(setForm, "qty" , "Quantity must be bigger than 1")
+    }else {
+      pushError(setForm, "qty", "")
+    };
+
+    if(form.image.value.type.slice(0,5) !== "image"){
+      return setErrMsg("File must be image type");
+    }
+
+
+// FormData
     const formData = new FormData();
 
     formData.append("image",form.image.value);
@@ -123,7 +191,7 @@ const EditProduct = () => {
     formData.append("desc",form.desc.value);
     formData.append("price",form.price.value);
     formData.append("qty",form.qty.value);
-    formData.append("category_id",8);
+    formData.append("category",form.category.value);
 
 
     try {
@@ -139,8 +207,7 @@ const EditProduct = () => {
       const payload = err.response.data;
       const message = payload.message;
 
-      // navigate to error page
-      console.log(message)
+      setErrMsg(message)
       };
 
     
@@ -149,14 +216,14 @@ const EditProduct = () => {
   
 
   return (
-    <StyledEditProduct>
+    <StyledFormProduct>
+         {errMsg && <Alert message={errMsg}/>}
          <b>Edit Product</b>
-      <div className="upload-img">
-          <button>Upload Image</button>
-          <input type="file" onChange={onSelect} name="image"/>
-          <span style={{marginLeft:"24px"}}> Original Image: </span>
+      <label className="upload-img">
+          <div>Upload Image</div>
+          <input style={{display:"none"}} type="file" onChange={onSelect} name="image"/>
           <img src={originalImg} style={{width:"64px",marginLeft:"8px"}}/>
-      </div>
+      </label>
       <form>
            <Input type="input" placeholder="name" value={form.name.value} err={form.name.errMsg} setForm={setForm}/>
            <div className="form-control">
@@ -165,9 +232,10 @@ const EditProduct = () => {
            </div>
            <Input type="input" placeholder="price" value={form.price.value} err={form.price.errMsg} setForm={setForm}/>
            <Input type="input" placeholder="qty" value={form.qty.value} err={form.qty.errMsg} setForm={setForm}/>
+           <Input type="input" placeholder="category" value={form.category.value} err={form.category.errMsg} setForm={setForm} />
            <button onClick={onSubmit}>Save</button>
       </form>
-    </StyledEditProduct>
+    </StyledFormProduct>
   )
 }
 

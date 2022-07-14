@@ -13,7 +13,7 @@ import Category from "./pages/Category";
 import EditCategory from "./pages/EditCategory";
 
 
-
+import SearchUser from "./pages/SearchUser";
 import Complain from "./pages/Complain";
 import  Auth  from "./pages/Auth";
 import Profile from "./pages/Profile";
@@ -122,7 +122,8 @@ function App() {
             <Route path="/editprofile" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <EditProfile/>} />
 
 
-            <Route path="/complain" element={!isLogin? <Navigate to="/auth"/> : <Complain/>}/>
+            <Route path="/complain/:id" element={!isLogin? <Navigate to="/auth"/> : <Complain/>}/>
+            <Route path="/searchuser" element={!isLogin? <Navigate to="/auth"/> : <SearchUser/>}/>
 
             <Route path="*" element={<NotFound/>} />
         </Routes>

@@ -4,18 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../App";
 
 
-import StyledEditProduct from '../core-ui/page/EditProduct.style'
+import StyledFormProfile from '../core-ui/page/FormProfile.style'
 import Input from "../components/Input";
 
 import {api} from "../connection";
+import { pushError } from "../auth";
+
+import unknown from "../assets/unknown.jpg";
+import Alert from "../components/Alert";
 
 const EditProfile = () => {
   const {token} = useContext(AppContext);
   const navigate = useNavigate();
   
 //  State
-  
-
   const[form,setForm] = useState(
     {
       image : {
@@ -38,8 +40,18 @@ const EditProfile = () => {
       },
     }
   )
+  const[errMsg,setErrMsg]= useState("");
+  const[originalImg,setOriginalImg] = useState(null);
 
 // Use Effects
+useEffect(()=>{
+  if(form.image.value && typeof form.image.value !== "string"){
+  const image = URL.createObjectURL(form.image.value);
+  setOriginalImg(image)
+  
+}
+},[form])
+
  useEffect(()=>{
     getInputs();
  },[])
@@ -59,7 +71,7 @@ const EditProfile = () => {
 
   const getInputs = async () => {
     try {
-      const res = await api.get(`/profile}`, {
+      const res = await api.get(`/profile`, {
         headers: {'Authorization':`Bearer ${token}`}
         });
 
@@ -69,7 +81,7 @@ const EditProfile = () => {
 
       setForm( {
         image : {
-         value :  profile.image, errMsg: ""
+         value :  "", errMsg: ""
         },
         gender : {
           value : profile.gender , errMsg: ""
@@ -88,7 +100,7 @@ const EditProfile = () => {
           },
       });
 
-      
+      setOriginalImg(profile.image)
 
 
 
@@ -108,6 +120,53 @@ const EditProfile = () => {
   const onSubmit = async(e) => {
     e.preventDefault();
 
+            // Reset
+            setErrMsg("")
+
+            // Filter
+            if(!form.image.value.type ){
+                return setErrMsg("Please select file and a different one")
+            };
+        
+            if(form.gender.value.length < 4){
+              return pushError(setForm, "gender" , "Gender can't be lower than 4 characters")
+            }else {
+              pushError(setForm, "gender", "")
+            };
+        
+            if(form.phone.value.length < 8){
+              return pushError(setForm, "phone" , "Phone can't be lower than 8 characters")
+            }else {
+              pushError(setForm, "phone", "")
+            };
+        
+            if(form.country.value.length < 4){
+              return pushError(setForm, "country" , "Country can't be lower than 4 characters")
+            }else {
+              pushError(setForm, "country", "")
+            };
+
+            if(form.city.value.length < 4){
+              return pushError(setForm, "city" , "City can't be lower than 4 characters")
+            }else {
+              pushError(setForm, "city", "")
+            };
+
+            if(form.address.value.length < 4){
+              return pushError(setForm, "address" , "Address can't be lower than 4 characters")
+            }else {
+              pushError(setForm, "address", "")
+            };
+        
+            if(form.image.value.type.slice(0,5) !== "image"){
+              return setErrMsg("File must be image type");
+            }
+        
+    
+   
+    
+
+// FormData
     const formData = new FormData();
 
     formData.append("image",form.image.value);
@@ -132,7 +191,7 @@ const EditProfile = () => {
       const message = payload.message;
 
       // navigate to error page
-      console.log(message)
+      setErrMsg(message)
       };
 
     
@@ -141,12 +200,14 @@ const EditProfile = () => {
   
 
   return (
-    <StyledEditProduct>
+    <StyledFormProfile>
+    {errMsg && <Alert message={errMsg}/>}
          <b>Edit Product</b>
-      <div className="upload-img">
-          <button>Upload Image</button>
-          <input type="file" onChange={onSelect} name="image"/>
-      </div>
+      <label className="upload-img">
+          <div>Upload Image</div>
+          <input style={{display:"none"}} type="file" onChange={onSelect} name="image"/>
+          <img src={originalImg? originalImg : unknown} style={{width:"64px",marginLeft:"8px"}}/>
+      </label>
       <form>
            <Input type="input" placeholder="phone" value={form.phone.value} err={form.phone.errMsg} setForm={setForm}/>
            <Input type="input" placeholder="gender" value={form.gender.value} err={form.gender.errMsg} setForm={setForm}/>
@@ -155,7 +216,7 @@ const EditProfile = () => {
            <Input type="input" placeholder="address" value={form.address.value} err={form.address.errMsg} setForm={setForm}/>
            <button onClick={onSubmit}>Save</button>
       </form>
-    </StyledEditProduct>
+    </StyledFormProfile>
   )
 }
 

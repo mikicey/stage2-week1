@@ -1,139 +1,70 @@
-import { useState } from "react"
+import { useState , useEffect , useContext} from "react"
+import { useNavigate, useParams} from "react-router-dom"
+
 import { StyledComplain } from "../core-ui/page/Complain.style"
 import ChatPerson from "../components/chat/ChatPerson"
 import ChatMsg from "../components/chat/ChatMsg"
-import profile from "../assets/profile.jpg"
+import profile from "../assets/unknown.jpg"
+
+import {api} from "../connection";
+import {AppContext} from "../App"
+
+
 
 const Complain = () => {
+  let {id} = useParams();
+  const {token} = useContext(AppContext);
+  const navigate = useNavigate();
+  
+
+  // States
   const[msgList,setMsgList] = useState([
-   {
-    isMe:false,
-    profile:profile,
-    message:"hey bro",
+    {
+     isMe:false,
+     profile:profile,
+     message:"hey bro",
+ 
+    },
+   
+   ]);
+ 
+   const[personList,setPersonList] = useState( [{
+     id:1,
+     img: profile,
+     name:"Mik",
+     lastMessage:"hey"
+   },
+   ]);
 
-   },
-   {
-    isMe:true,
-    profile:profile,
-    message:"hey",
-   },
-   {
-    isMe:false,
-    profile:profile,
-    message:"Your products is trash",
-   },
-   {
-    isMe:false,
-    profile:profile,
-    message:"hey bro",
+  // UseEffects
+  useEffect(()=>{
+    getMessageList(id)
+  },[])
 
-   },
-   {
-    isMe:true,
-    profile:profile,
-    message:"hey",
-   },
-   {
-    isMe:false,
-    profile:profile,
-    message:"Your products is trash",
-   },
-   {
-    isMe:false,
-    profile:profile,
-    message:"hey bro",
 
-   },
-   {
-    isMe:true,
-    profile:profile,
-    message:"hey",
-   },
-   {
-    isMe:false,
-    profile:profile,
-    message:"Your products is trash",
-   },
-  ]);
+  // Functions
+  const getFriends = () => {
 
-  const[personList,setPersonList] = useState( [{
-    id:1,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:2,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:3,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:4,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:1,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:2,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:3,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:4,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:5,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:6,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:7,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },
-  {
-    id:8,
-    img: profile,
-    name:"Mik",
-    lastMessage:"hey"
-  },]);
+  };
+
+  const getMessageList = (roomid) => {
+
+  };
+
+  const postMessage = () => {
+
+  };
+
+  const deleteMessage = () => {
+
+  };
 
   return (
     
       <StyledComplain>
            {/* Left */}
            <div className='chat-container'>
+                  <button className="search-btn" onClick={()=>{navigate("/searchuser")}}>Search Users</button>
                   <div className="chat-list">
                         {personList.map(person => <ChatPerson key={person.id} person={person}/>)}
                   </div>

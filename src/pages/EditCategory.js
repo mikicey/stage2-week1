@@ -3,10 +3,13 @@ import { useNavigate,useParams } from "react-router-dom";
 
 import { AppContext } from "../App";
 
-import StyledEditCategory from "../core-ui/page/EditCategory.style";
+import StyledFormCategory from "../core-ui/page/FormCategory.style.js";
 import Input from "../components/Input";
 
 import {api} from "../connection"
+import { pushError } from "../auth";
+import Alert from "../components/Alert";
+
 
 const EditCategory = () => {
   const {token} = useContext(AppContext);
@@ -19,6 +22,7 @@ const EditCategory = () => {
       value : "" , errMsg: ""
     },
   });
+  const[errMsg,setErrMsg] = useState("")
 
   // Use Effects
   useEffect(()=>{
@@ -64,6 +68,17 @@ const EditCategory = () => {
   
   const onSubmit = async(e) => {
     e.preventDefault();
+
+    // Reset
+    setErrMsg("")
+
+    // Length
+
+    if(form.category.value.length < 4){
+      return pushError(setForm, "category" , "Category can't be lower than 4 characters")
+    }else {
+      pushError(setForm, "category", "")
+    };
    
     try {
       const res = await api.put(`/category/${id}`, {
@@ -81,8 +96,7 @@ const EditCategory = () => {
       const payload = err.response.data;
       const message = payload.message;
 
-      // navigate to error page
-      console.log(message)
+      setErrMsg(message)
       
 
       };
@@ -91,13 +105,15 @@ const EditCategory = () => {
   };
 
   return (
-    <StyledEditCategory>
+    <StyledFormCategory>
+      {errMsg && <Alert message={errMsg}/> }
+      
       <b>Edit Category</b>
       <form>
            <Input type="input" placeholder="category" value={form.category.value} err={form.category.errMsg} setForm={setForm}/>
            <button onClick={onSubmit}>Save</button>
       </form>
-    </StyledEditCategory>
+    </StyledFormCategory>
   )
 }
 

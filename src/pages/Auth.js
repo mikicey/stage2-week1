@@ -13,6 +13,7 @@ import StyledAuth from "../core-ui/page/Auth.style.js"
   const[auth,setAuth] = useState("register");
   const[errMsg,setErrMsg] = useState("")
 
+// STATE
   const[loginForm,setLoginForm]=useState({
     email : {
       value : "" , errMsg: ""
@@ -34,29 +35,26 @@ import StyledAuth from "../core-ui/page/Auth.style.js"
     },
   });
 
-
-
-
-  
-
+// FUNCTIONS
   const submitLoginForm = async(e) => {
     e.preventDefault();
+
+    // Reset
+    setErrMsg("")
 
 
     //  Validate format
     if(loginForm.email.value.length < 4){
       return pushError(setLoginForm,"email","Email must be more than 3 characters");
-
-    };
+    } else {pushError(setLoginForm,"email","")}
 
     if(!emailChecker(loginForm.email.value)){
       return pushError(setLoginForm,"email","Email format incorrect")
-   };
+   } else {pushError(setLoginForm,"email","")}
 
     if(loginForm.password.value.length < 8){
       return pushError(setLoginForm,"password","Password must be more than 7 characters");
-
-    };
+    } else {pushError(setLoginForm,"password","")}
 
     
     
@@ -85,23 +83,24 @@ import StyledAuth from "../core-ui/page/Auth.style.js"
   const submitRegisterForm = async(e) => {
     e.preventDefault();
 
+    setErrMsg("")
+
     //  Validate format
 
     // username
     if(registerForm.name.value === ""){
       return pushError(setRegisterForm,"name","Name cannot be empty");
-
-    };
+    } else {pushError(setRegisterForm,"name","")}
 
     // email
     if(!emailChecker(registerForm.email.value)){
        return pushError(setRegisterForm,"email","Email format incorrect")
-    };
+    } else {pushError(setRegisterForm,"email","")}
 
     //  pw
     if(registerForm.password.value.length < 8){
       return pushError(setRegisterForm,"password","Minimal password length is 8")
-    };
+    } else {pushError(setRegisterForm,"password","")}
 
 
 
