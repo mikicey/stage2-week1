@@ -22,7 +22,11 @@ img{
     padding: 8px 16px;
     color: white;
     border-radius: 6px;
+    min-width: 200px;
     max-width: 300px;
+    min-height: 40px;
+
+   
 
     .triangle{
         background-color:${(props)=>props.isMe? "#262626" : "#575757"};
@@ -33,6 +37,18 @@ img{
         height: 10px;
         transform: ${(props)=>props.isMe ? "rotate(180deg)" : "rotate(0deg)"};
         clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    }
+
+    p{
+        word-break: break-all;
+        
+    }
+
+    .msg-time{
+        position: absolute;
+        bottom: 160%;
+        width: 300px;
+        font-size:12px;
     }
 
 }

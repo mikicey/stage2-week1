@@ -4,10 +4,11 @@ import { useNavigate, useParams} from "react-router-dom"
 import { StyledComplain } from "../core-ui/page/Complain.style"
 import ChatPerson from "../components/chat/ChatPerson"
 import ChatMsg from "../components/chat/ChatMsg"
-import profile from "../assets/unknown.jpg"
+
 
 import {api} from "../connection";
-import {AppContext} from "../App"
+import {pushError} from "../auth/index";
+import {AppContext} from "../App";
 
 
 
@@ -18,46 +19,135 @@ const Complain = () => {
   
 
   // States
-  const[msgList,setMsgList] = useState([
-    {
-     isMe:false,
-     profile:profile,
-     message:"hey bro",
- 
-    },
+   const[activePerson,setActivePerson] = useState(Number(id));
+   const[clickedPerson,setClickedPerson] = useState(null)
    
-   ]);
- 
-   const[personList,setPersonList] = useState( [{
-     id:1,
-     img: profile,
-     name:"Mik",
-     lastMessage:"hey"
-   },
-   ]);
+   const[msgList,setMsgList] = useState([]);
+   const[personList,setPersonList] = useState( []);
 
-  // UseEffects
+   const[form,setForm] = useState({
+       message : {
+              value : "",
+              errMsg : ""
+       }
+   });
+
+ 
+
+  // Use Effects
   useEffect(()=>{
-    getMessageList(id)
+
+    if(activePerson !== 0) getMessageList(activePerson)
+
+  },[activePerson]);
+
+
+
+  useEffect(()=>{
+    getFriendMessages()
   },[])
 
 
   // Functions
-  const getFriends = () => {
+  const getFriendMessages = async() => {
+      try {
+
+         const res = await api.get(`/messages`,{
+              headers : {'Authorization':`Bearer ${token}`}
+         });
+
+         const payload = res.data;
+         const messages = payload.data.messages;
+
+         setPersonList(messages);
+
+      } catch(err) {
+         const payload = err.response.data;
+         const message = payload.message;
+
+          // navigate to error page
+         console.log(message)
+      }
+  };
+
+  const getMessageList = async(roomid) => {
+       try{
+             const res = await api.get(`/messages/${roomid}`,{
+              headers: {'Authorization':`Bearer ${token}`}
+             });
+
+             const payload = res.data;
+             const messages = payload.data.messages;
+             setMsgList(messages);
+
+       } catch(err) {
+
+             const payload = err.response.data;
+             const message = payload.message;
+
+              // navigate to error page
+              console.log(message)
+
+       }
+  };
+
+  const postMessage = async(roomid) => {
+
+       
+      try {
+          
+          await api.post(`/message/${roomid}`, {message : form.message.value} ,{
+              headers: {'Authorization':`Bearer ${token}`}
+          });
+
+          getMessageList(roomid)
+          getFriendMessages();
+      } catch(err) {
+
+       const payload = err.response.data;
+       const message = payload.message;
+
+       // navigate to error page
+       console.log(message)
+
+      }
+  };
+
+  const deleteMessage = async() => {
 
   };
 
-  const getMessageList = (roomid) => {
+  const onChange = (e) => {
+        setForm((prev)=>{
+              return {
+                     ...prev,
+                     [e.target.name] :{
+                            value:e.target.value,
+                            errMsg : prev[e.target.name].errMsg
+                     } 
+              }
+        })
+  }
 
-  };
+  const onSubmit = (e) => {
+     e.preventDefault();
+     
 
-  const postMessage = () => {
+     if(!form.message.value){
+       return pushError(setForm,"message","Cannot send empty text")
+     };
 
-  };
 
-  const deleteMessage = () => {
+     
+     postMessage(activePerson);
 
-  };
+     setForm({
+       message : {
+              value : "",
+              errMsg : ""
+       }
+   })
+  }
 
   return (
     
@@ -66,7 +156,7 @@ const Complain = () => {
            <div className='chat-container'>
                   <button className="search-btn" onClick={()=>{navigate("/searchuser")}}>Search Users</button>
                   <div className="chat-list">
-                        {personList.map(person => <ChatPerson key={person.id} person={person}/>)}
+                        {personList ? personList.map(person => <ChatPerson key={person.room_id} person={person} setActivePerson={setActivePerson} setClickedPerson={setClickedPerson} clickedPerson={clickedPerson}/>) : <p>You don't have any active messages...</p>}
                   </div>
            </div>
 
@@ -77,12 +167,12 @@ const Complain = () => {
            <div className='chatbody'>
                   <div className="messages-container">
                          <div className="messages-list">
-                                {msgList.map(msg => <ChatMsg msg={msg}/>)}
+                                {activePerson == 0 ? <p>Please click one of your friends and start chatting!!</p>  :  msgList.map(msg => <ChatMsg key={msg.message_id} msg={msg}/>)}
                          </div>
                   </div>
-                  <form>
-                     <input type="text" placeholder="send message"/>
-                  </form>
+                {activePerson != 0 &&  <form onSubmit={onSubmit}>
+                     <input name="message" type="text" placeholder="Send message" onChange={onChange} value={form.message.value}/>
+                  </form> }
            </div>
 
       </StyledComplain>

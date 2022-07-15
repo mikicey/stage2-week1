@@ -47,6 +47,7 @@ padding-bottom: 16px;
     flex-direction: column;
 
     .messages-container{
+        position: relative;
         flex:1;
         overflow-y:scroll;
         scrollbar-width: none;
@@ -55,6 +56,19 @@ padding-bottom: 16px;
     .messages-container::-webkit-scrollbar {
         display: none;
     }
+
+    .messages-list{ 
+
+          p{
+
+            position: absolute;
+            font-size: 24px;
+
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+          }
+    };
 
     form{
         width: 100%;

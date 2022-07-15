@@ -9,6 +9,8 @@ padding: 12px;
 cursor: pointer;
 transition: 150ms;
 
+background-color: ${(props)=>props.Clicked ? "#000" : "transaparent"};
+
 &:hover{
     background-color: #000;
 }

@@ -10,7 +10,9 @@ const UserCard = ({user,navigate,api,token}) => {
   const chatUser = async() => {
 
     try {
-       const res = await api.post(`/chat/${userId}`,{
+      
+       console.log(userId)
+       const res = await api.post(`/chat/${userId}`,{},{
        headers: {'Authorization':`Bearer ${token}`}
       });
 
@@ -42,7 +44,7 @@ const UserCard = ({user,navigate,api,token}) => {
         <div className="user-info">
              <span>{user.username}</span>
              <p>{user.isAdmin ? "Admin" : "User"} </p>
-            <button onClick={chatUser}>Chat</button>
+            <button onClick={chatUser}>Say Hi</button>
         </div>
     </StyledUserCard>
   )

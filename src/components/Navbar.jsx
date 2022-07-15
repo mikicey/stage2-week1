@@ -31,7 +31,7 @@ const Navbar = ({isAdmin,setUser}) => {
             <img src={logo} style={{width:"70px"}}/>
             
             <div className='right'>
-                <NavLink style={navLinkStyles} to="/complain">Complain</NavLink>
+                <NavLink style={navLinkStyles} to="/complain/0">Complain</NavLink>
 
                 {isAdmin ? 
                 <>

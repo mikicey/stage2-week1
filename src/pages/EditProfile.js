@@ -84,19 +84,19 @@ useEffect(()=>{
          value :  "", errMsg: ""
         },
         gender : {
-          value : profile.gender , errMsg: ""
+          value : profile.gender ? profile.gender : "" , errMsg: ""
         },
         phone : {
-          value : profile.phone , errMsg: ""
+          value : profile.phone ? profile.phone : "" , errMsg: ""
         },
         country : {
-          value : profile.country , errMsg: ""
+          value : profile.country ? profile.country : "" , errMsg: ""
         },
         city : {
-          value : profile.city , errMsg: ""
+          value : profile.city ? profile.city : "" , errMsg: ""
         },
         address : {
-            value : profile.address , errMsg: ""
+            value : profile.address ? profile.address : "" , errMsg: ""
           },
       });
 
@@ -128,31 +128,31 @@ useEffect(()=>{
                 return setErrMsg("Please select file and a different one")
             };
         
-            if(form.gender.value.length < 4){
+            if(form.gender.value.length < 4 || !form.gender.value){
               return pushError(setForm, "gender" , "Gender can't be lower than 4 characters")
             }else {
               pushError(setForm, "gender", "")
             };
         
-            if(form.phone.value.length < 8){
+            if(form.phone.value.length < 8 || !form.phone.value){
               return pushError(setForm, "phone" , "Phone can't be lower than 8 characters")
             }else {
               pushError(setForm, "phone", "")
             };
         
-            if(form.country.value.length < 4){
+            if(form.country.value.length < 4 || !form.country.value){
               return pushError(setForm, "country" , "Country can't be lower than 4 characters")
             }else {
               pushError(setForm, "country", "")
             };
 
-            if(form.city.value.length < 4){
+            if(form.city.value.length < 4 || !form.city.value ){
               return pushError(setForm, "city" , "City can't be lower than 4 characters")
             }else {
               pushError(setForm, "city", "")
             };
 
-            if(form.address.value.length < 4){
+            if(form.address.value.length < 4 || !form.address.value ){
               return pushError(setForm, "address" , "Address can't be lower than 4 characters")
             }else {
               pushError(setForm, "address", "")
