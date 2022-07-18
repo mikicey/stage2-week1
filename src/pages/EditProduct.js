@@ -43,7 +43,7 @@ const EditProduct = () => {
   )
   const[errMsg,setErrMsg] = useState("");
 
-  
+  const[categories,setCategories] = useState([]);
 
 // Use Effects
 
@@ -58,6 +58,12 @@ useEffect(()=>{
  useEffect(()=>{
     getInputs();
  },[])
+
+ useEffect(()=>{
+  
+  getCategories();
+  
+},[])
 
  
 // Functions
@@ -213,6 +219,30 @@ useEffect(()=>{
     
 }
 
+const getCategories = async() => {
+  try {
+
+    const res = await api.get("/categories", {
+      headers: {'Authorization':`Bearer ${token}`}
+      });
+
+    // Extract data
+    const payload = res.data;
+    const categories = payload.data.categories;
+
+    setCategories(categories);
+
+  } catch (err) {
+    const payload = err.response.data;
+    const message = payload.message;
+
+    // navigate to error page
+    console.log(message)
+    
+
+  };
+}
+
   
 
   return (
@@ -232,7 +262,10 @@ useEffect(()=>{
            </div>
            <Input type="input" placeholder="price" value={form.price.value} err={form.price.errMsg} setForm={setForm}/>
            <Input type="input" placeholder="qty" value={form.qty.value} err={form.qty.errMsg} setForm={setForm}/>
-           <Input type="input" placeholder="category" value={form.category.value} err={form.category.errMsg} setForm={setForm} />
+           <label style={{marginRight : "20px"}}>Choose category</label>
+           <select id="category" name="category" onChange={onChange} value={form.category.value}>
+                  {categories.map(cat => <option value={cat.name}>{cat.name}</option>)}
+           </select>
            <button onClick={onSubmit}>Save</button>
       </form>
     </StyledFormProduct>

@@ -57,18 +57,6 @@ padding-bottom: 16px;
         display: none;
     }
 
-    .messages-list{ 
-
-          p{
-
-            position: absolute;
-            font-size: 24px;
-
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-          }
-    };
 
     form{
         width: 100%;

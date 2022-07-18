@@ -8,6 +8,7 @@ margin-bottom: 50px;
 padding-right: 24px;
 
 
+
 img{
     width: 50px;
     height: 50px;
@@ -22,11 +23,8 @@ img{
     padding: 8px 16px;
     color: white;
     border-radius: 6px;
-    min-width: 200px;
-    max-width: 300px;
-    min-height: 40px;
-
-   
+    width: 200px;
+    max-width: 200px;
 
     .triangle{
         background-color:${(props)=>props.isMe? "#262626" : "#575757"};
@@ -39,16 +37,19 @@ img{
         clip-path: polygon(100% 0, 0 50%, 100% 100%);
     }
 
-    p{
+    .msg{
         word-break: break-all;
+        font-size: 14px;
+        color: white;
         
     }
 
     .msg-time{
+        color: #ABABAB;
         position: absolute;
-        bottom: 160%;
-        width: 300px;
-        font-size:12px;
+        font-size:10px;
+        bottom: -18px;
+        right: ${(props)=>props.isMe? "60%" : "0px"};
     }
 
 }

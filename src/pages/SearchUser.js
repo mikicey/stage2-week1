@@ -38,7 +38,13 @@ const SearchUser = () => {
            const payload = res.data;
            const users = payload.data.users;
 
-           setUserList(users);
+          // Sortdata
+
+           const filteredUsers = users.filter(user => user.username.toLowerCase().trim().startsWith(form.search.value) === true)
+
+          setUserList(filteredUsers);
+
+          
 
         } catch(err) {
 

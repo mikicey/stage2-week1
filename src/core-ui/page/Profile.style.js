@@ -49,6 +49,7 @@ import styled from "styled-components";
         margin-top: 36px;
         overflow-y: scroll;
         height: 488px;
+        scrollbar-width: none;
     }
  }
  

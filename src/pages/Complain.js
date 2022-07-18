@@ -1,4 +1,4 @@
-import { useState , useEffect , useContext} from "react"
+import { useState , useEffect , useContext, useRef} from "react"
 import { useNavigate, useParams} from "react-router-dom"
 
 import { StyledComplain } from "../core-ui/page/Complain.style"
@@ -9,14 +9,21 @@ import ChatMsg from "../components/chat/ChatMsg"
 import {api} from "../connection";
 import {pushError} from "../auth/index";
 import {AppContext} from "../App";
+import io from "socket.io-client";
 
+
+const socket = io.connect("http://localhost:3000");
 
 
 const Complain = () => {
   let {id} = useParams();
-  const {token} = useContext(AppContext);
+  const messagesEndRef = useRef(null);
+  const {token,user} = useContext(AppContext);
   const navigate = useNavigate();
+
+
   
+
 
   // States
    const[activePerson,setActivePerson] = useState(Number(id));
@@ -32,21 +39,64 @@ const Complain = () => {
        }
    });
 
- 
+   
 
-  // Use Effects
+// Use Effects
+
+     // Get friend messages at first time
+useEffect(()=>{
+       getFriendMessages()
+       
+     },[])
+
+     // Change message list every time main room id change
   useEffect(()=>{
 
-    if(activePerson !== 0) getMessageList(activePerson)
+    if(activePerson !== 0) {
+       getMessageList(activePerson)
+      
+}
 
   },[activePerson]);
 
 
-
   useEffect(()=>{
-    getFriendMessages()
-  },[])
+      scrollToBottom();
+  },[msgList])
 
+
+
+      //   Clean previous listener
+useEffect(()=>{
+       socket.off("message_sent");
+       socket.off("message_fail");
+},[activePerson])
+
+      // Add new listener
+  useEffect(()=>{
+
+    
+       socket.on("message_sent",(data)=>{
+
+       
+       console.log(data.roomid , activePerson)
+
+       if(data.roomid == activePerson){
+       getMessageList(data.roomid) 
+       console.log(`Executed`)
+       };
+
+       getFriendMessages();
+       
+    });
+
+    socket.on("message_fail",(data)=>{
+       console.log(data.message)
+    })
+  },[activePerson])
+
+
+ 
 
   // Functions
   const getFriendMessages = async() => {
@@ -59,6 +109,12 @@ const Complain = () => {
          const payload = res.data;
          const messages = payload.data.messages;
 
+       //  Join room
+       const rooms = messages.map(message => {return message.room_id});
+
+       socket.emit("join_room", { room_ids : rooms})
+
+       // Show messages
          setPersonList(messages);
 
       } catch(err) {
@@ -92,25 +148,13 @@ const Complain = () => {
   };
 
   const postMessage = async(roomid) => {
-
        
-      try {
-          
-          await api.post(`/message/${roomid}`, {message : form.message.value} ,{
-              headers: {'Authorization':`Bearer ${token}`}
-          });
+          socket.emit("send_message",{
+              userId: user.user_id,
+              roomID : roomid,
+              message : form.message.value
+          })
 
-          getMessageList(roomid)
-          getFriendMessages();
-      } catch(err) {
-
-       const payload = err.response.data;
-       const message = payload.message;
-
-       // navigate to error page
-       console.log(message)
-
-      }
   };
 
   const deleteMessage = async() => {
@@ -149,6 +193,10 @@ const Complain = () => {
    })
   }
 
+  const scrollToBottom = () => {
+       messagesEndRef.current?.scrollIntoView({behavior:"smooth"});
+  }
+
   return (
     
       <StyledComplain>
@@ -169,6 +217,7 @@ const Complain = () => {
                          <div className="messages-list">
                                 {activePerson == 0 ? <p>Please click one of your friends and start chatting!!</p>  :  msgList.map(msg => <ChatMsg key={msg.message_id} msg={msg}/>)}
                          </div>
+                         <div ref={messagesEndRef}></div>
                   </div>
                 {activePerson != 0 &&  <form onSubmit={onSubmit}>
                      <input name="message" type="text" placeholder="Send message" onChange={onChange} value={form.message.value}/>

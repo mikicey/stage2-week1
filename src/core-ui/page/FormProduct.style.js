@@ -29,7 +29,7 @@ import styled from "styled-components";
     margin-top:26px;
 
     textarea{
-                padding: 8px 24px 8px 16px;
+                padding: 8px 24px 8px 12px;
                 width: 100%;
                 background-color:#BCBCBC;
                 color: #555555;
@@ -65,6 +65,19 @@ import styled from "styled-components";
             
             }
           }
+
+    select{
+      background-color: #F74D4D;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px 8px 8px;
+      font-family: Avenir;
+    }
+
+    option{
+      font-family: sans-serif;
+    }
 
     button{
         margin-top: 70px;

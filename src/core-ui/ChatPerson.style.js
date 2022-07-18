@@ -9,6 +9,8 @@ padding: 12px;
 cursor: pointer;
 transition: 150ms;
 
+position: relative;
+
 background-color: ${(props)=>props.Clicked ? "#000" : "transaparent"};
 
 &:hover{
@@ -23,6 +25,10 @@ img{
     object-fit: cover;
 }
 
+span{
+     
+}
+
 div{
     span{
         font-weight: bold;
@@ -35,6 +41,13 @@ div{
     }
 }
 
+.time{
+    position: absolute;
+    right:16px;
+    top:16px;
+    font-size: 10px;
+    color: #ABABAB;
+}
 `
 
 export default StyledChatPerson;

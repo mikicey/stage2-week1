@@ -105,6 +105,7 @@ function App() {
        { isLogin && <Navbar  setUser={setUser} isAdmin={isAdmin}/> }
                                      
         <Routes>
+            <Route path="/myprofile" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <Profile/>} />
             <Route path="/" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <Home/>  }/>
             <Route path="/detail/:id" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <Detail/>  }/>
 
@@ -120,7 +121,7 @@ function App() {
             
             
 
-            <Route path="/myprofile" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <Profile/>} />
+            
             <Route path="/editprofile" element={!isLogin ? <Navigate to="/auth"/> : isAdmin ? <Navigate to="/product"/> : <EditProfile/>} />
 
 

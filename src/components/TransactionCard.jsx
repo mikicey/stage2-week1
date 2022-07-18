@@ -14,11 +14,8 @@ const TransactionCard = ({transaction}) => {
      const time = day + " " +  month + "," + year;
 
      
-
-
-     
   return (
-      <StyledTransactionCard>
+      <StyledTransactionCard status={transaction.status}>
            <img className='transaction-img' src={transaction.product.image} alt=''/>
            <div className='transaction-description'>
                 <b>{transaction.product.title}</b>
@@ -27,7 +24,7 @@ const TransactionCard = ({transaction}) => {
                 <p>Qty: {transaction.qty}</p>
                 <b className='total'>Sub Total:{transaction.price}</b>
            </div>
-           <img src={logo} />
+           <div className='status'>{transaction.status}</div>
       </StyledTransactionCard>
   )
 }

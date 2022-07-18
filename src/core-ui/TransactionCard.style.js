@@ -45,6 +45,19 @@ object-fit: cover;
         word-break: break-all;
     }
 }
+
+.status{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    width: 80px;
+
+    font-weight: bold;
+    color: white;
+
+    background-color: ${(props)=> props.status === "success" ? "rgba(103,255,146,.65)" : "pending" ? "rgba(255,223,107,.65)" : "rgba(255,98,88,.65)"};
+}
 `
 
 export default StyledTransactionCard;

@@ -4,17 +4,20 @@ import unknown from "../../assets/unknown.jpg"
 const ChatPerson = ({person,setActivePerson,setClickedPerson,clickedPerson}) => {
   const Clicked = person.user_id == clickedPerson ? true : false; 
   
-  const timeString = person.hour.toString() + ":" + person.minute.toString() + "," + person.day + "-" + person.month + "-" + person.year;
+  const timeString = person.hour.toString() + ":" + person.minute.toString() + ", " + person.day + "-" + person.month + "-" + person.year;
+  const croppedMessage = person.last_msg.slice(0,14) + "....";
 
   return (
+    <div onClick={()=>{setClickedPerson(person.user_id);setActivePerson(person.room_id)}}>
     <StyledChatPerson Clicked={Clicked}>
-        <img src={person.profile_img.length === 26 ? unknown : person.profile_img} onClick={()=>{setActivePerson(person.room_id);setClickedPerson(person.user_id)}}/>
-        <div onClick={()=>{setActivePerson(person.room_id);setClickedPerson(person.user_id)}}>
+        <img src={person.profile_img.length === 26 ? unknown : person.profile_img} />
+        <div>
              <span>{person.username}</span>
-             <p>{person.last_msg}</p>
+             <p>{croppedMessage}</p>
         </div>
-        <span style={{marginLeft:"48px"}}>{timeString}</span>
+        <span className="time">{timeString}</span>
     </StyledChatPerson>
+    </div>
   )
 }
 
